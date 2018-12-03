@@ -8,12 +8,10 @@
 
 import Cocoa
 
-class ViewController: NSViewController {
-
+class SonagiViewController: NSViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
 
     override var representedObject: Any? {
