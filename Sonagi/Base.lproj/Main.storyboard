@@ -688,9 +688,9 @@
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="960" height="200"/>
+                        <rect key="contentRect" x="420" y="180" width="960" height="150"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-                        <value key="minSize" type="size" width="960" height="200"/>
+                        <value key="minSize" type="size" width="960" height="150"/>
                         <value key="maxSize" type="size" width="1920" height="400"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
@@ -709,17 +709,61 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="SonagiViewController" customModule="Sonagi" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="960" height="200"/>
+                        <rect key="frame" x="0.0" y="0.0" width="960" height="150"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="ultraDark" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="j83-yJ-04P">
-                                <rect key="frame" x="0.0" y="0.0" width="960" height="200"/>
+                                <rect key="frame" x="0.0" y="0.0" width="960" height="150"/>
                                 <subviews>
-                                    <visualEffectView fixedFrame="YES" blendingMode="behindWindow" material="ultraDark" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="fEo-R2-ESf">
-                                        <rect key="frame" x="0.0" y="0.0" width="960" height="200"/>
-                                        <autoresizingMask key="autoresizingMask"/>
+                                    <visualEffectView blendingMode="behindWindow" material="ultraDark" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="fEo-R2-ESf">
+                                        <rect key="frame" x="0.0" y="0.0" width="960" height="150"/>
+                                        <subviews>
+                                            <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j6n-68-VPx">
+                                                <rect key="frame" x="20" y="30" width="920" height="90"/>
+                                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="tvY-na-eEz">
+                                                    <rect key="frame" x="0.0" y="0.0" width="920" height="90"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="TiS-NW-tHs">
+                                                            <rect key="frame" x="0.0" y="0.0" width="920" height="90"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <color key="textColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <size key="minSize" width="920" height="90"/>
+                                                            <size key="maxSize" width="920" height="10000000"/>
+                                                            <attributedString key="textStorage">
+                                                                <fragment content="저는 내년에 한국에 갈 거예요">
+                                                                    <attributes>
+                                                                        <color key="NSColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        <font key="NSFont" size="32" name="NanumSquareR"/>
+                                                                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                                    </attributes>
+                                                                </fragment>
+                                                            </attributedString>
+                                                            <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        </textView>
+                                                    </subviews>
+                                                </clipView>
+                                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="xbx-8z-pAA">
+                                                    <rect key="frame" x="-100" y="-100" width="16" height="160"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </scroller>
+                                            </scrollView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="j6n-68-VPx" secondAttribute="trailing" constant="20" id="BjX-W1-dZE"/>
+                                            <constraint firstItem="j6n-68-VPx" firstAttribute="leading" secondItem="fEo-R2-ESf" secondAttribute="leading" constant="20" id="JhS-wY-ChG"/>
+                                            <constraint firstItem="j6n-68-VPx" firstAttribute="top" secondItem="fEo-R2-ESf" secondAttribute="top" constant="30" id="fx1-2B-Ath"/>
+                                            <constraint firstAttribute="bottom" secondItem="j6n-68-VPx" secondAttribute="bottom" constant="30" id="zZ0-yf-EDe"/>
+                                        </constraints>
                                     </visualEffectView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="fEo-R2-ESf" secondAttribute="trailing" id="AEL-G7-ZLx"/>
+                                    <constraint firstItem="fEo-R2-ESf" firstAttribute="top" secondItem="j83-yJ-04P" secondAttribute="top" id="HSn-r4-x03"/>
+                                    <constraint firstAttribute="bottom" secondItem="fEo-R2-ESf" secondAttribute="bottom" id="TUt-S7-UdM"/>
+                                    <constraint firstItem="fEo-R2-ESf" firstAttribute="leading" secondItem="j83-yJ-04P" secondAttribute="leading" id="rqm-X2-qvY"/>
+                                </constraints>
                             </visualEffectView>
                         </subviews>
                         <constraints>
