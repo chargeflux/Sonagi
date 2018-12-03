@@ -731,15 +731,6 @@
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <size key="minSize" width="920" height="90"/>
                                                             <size key="maxSize" width="920" height="10000000"/>
-                                                            <attributedString key="textStorage">
-                                                                <fragment content="저는 내년에 한국에 갈 거예요">
-                                                                    <attributes>
-                                                                        <color key="NSColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                        <font key="NSFont" size="32" name="NanumSquareR"/>
-                                                                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                                                    </attributes>
-                                                                </fragment>
-                                                            </attributedString>
                                                             <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         </textView>
                                                     </subviews>
@@ -773,6 +764,9 @@
                             <constraint firstItem="j83-yJ-04P" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="pOi-o5-2j1"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="outputTextView" destination="TiS-NW-tHs" id="oR8-a6-xcF"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
