@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B2E2BC421B4AABC0016402F /* SonagiParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2E2BC321B4AABC0016402F /* SonagiParser.swift */; };
+		5B2E2BC621B4AB2C0016402F /* KonlpyParser.py in Resources */ = {isa = PBXBuildFile; fileRef = 5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */; };
 		5BCEA17C21B4A5570061A548 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCEA17B21B4A5570061A548 /* AppDelegate.swift */; };
 		5BCEA17E21B4A5570061A548 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCEA17D21B4A5570061A548 /* ViewController.swift */; };
 		5BCEA18021B4A55A0061A548 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BCEA17F21B4A55A0061A548 /* Assets.xcassets */; };
@@ -25,6 +27,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5B2E2BC321B4AABC0016402F /* SonagiParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonagiParser.swift; sourceTree = "<group>"; };
+		5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = KonlpyParser.py; sourceTree = "<group>"; };
 		5BCEA17821B4A5560061A548 /* Sonagi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sonagi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCEA17B21B4A5570061A548 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5BCEA17D21B4A5570061A548 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -82,6 +86,8 @@
 				5BCEA18121B4A55A0061A548 /* Main.storyboard */,
 				5BCEA18421B4A55A0061A548 /* Info.plist */,
 				5BCEA18521B4A55A0061A548 /* Sonagi.entitlements */,
+				5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */,
+				5B2E2BC321B4AABC0016402F /* SonagiParser.swift */,
 			);
 			path = Sonagi;
 			sourceTree = "<group>";
@@ -176,6 +182,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B2E2BC621B4AB2C0016402F /* KonlpyParser.py in Resources */,
 				5BCEA18021B4A55A0061A548 /* Assets.xcassets in Resources */,
 				5BCEA18321B4A55A0061A548 /* Main.storyboard in Resources */,
 			);
@@ -196,6 +203,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BCEA17E21B4A5570061A548 /* ViewController.swift in Sources */,
+				5B2E2BC421B4AABC0016402F /* SonagiParser.swift in Sources */,
 				5BCEA17C21B4A5570061A548 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
