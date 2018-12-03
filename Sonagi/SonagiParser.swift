@@ -11,15 +11,21 @@ import Foundation
 
 
 class PartOfSpeech {
+
     var inputKR: String!
     var task = Process()
     var pipe = Pipe()
     var posDict: [Int:(morph:String,pos:String)] = [:]
     
+    init?(input:String) {
+        inputKR = input
+        parseInputForPOS()
+    }
+    
     func parseInputForPOS() {
         task.executableURL = URL(fileURLWithPath: "/usr/local/bin/python3")
         let filePath = Bundle.main.url(forResource: "KonlpyParser", withExtension: "py")
-        task.arguments = [filePath!.absoluteString,"--type", "pos","--input",inputKR]
+        task.arguments = [filePath!.path,"--type", "pos","--input",inputKR]
         task.standardOutput = pipe
         try? task.run()
         

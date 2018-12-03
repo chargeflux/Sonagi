@@ -19,9 +19,12 @@ class SonagiTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testSonagiParserPOS() {
+        let pos = Sonagi.PartOfSpeech(input: "저는 내년에 한국에 갈 거예요")
+        let correctPosDict: [Int:(morph:String,pos:String)] = [6: (morph: "갈다", pos: "Verb"), 3: (morph: "에", pos: "Josa"), 7: (morph: "거", pos: "Noun"), 8: (morph: "예요", pos: "Josa"), 0: (morph: "저", pos: "Noun"), 1: (morph: "는", pos: "Josa"), 2: (morph: "내년", pos: "Noun"), 4: (morph: "한국", pos: "Noun"), 5: (morph: "에", pos: "Josa")]
+        for key in correctPosDict.keys {
+            XCTAssertTrue(correctPosDict[key]! == (pos?.posDict[key])!, "POS tagging is incorrect")
+        }
     }
 
     func testPerformanceExample() {
