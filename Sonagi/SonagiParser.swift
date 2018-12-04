@@ -54,12 +54,12 @@ class PartOfSpeech {
     }
     
     func parseInputForPOS() {
+        // TODO: get permission for path
         task.executableURL = URL(fileURLWithPath: "/usr/local/bin/python3")
         let filePath = Bundle.main.url(forResource: "KonlpyParser", withExtension: "py")
         task.arguments = [filePath!.path,"--type", "pos","--input",inputKR]
         task.standardOutput = pipe
-        try? task.run()
-        
+        try! task.run()
         let handle = pipe.fileHandleForReading
         let data = handle.readDataToEndOfFile()
         let out = String(data: data, encoding: String.Encoding.utf8)
