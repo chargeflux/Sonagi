@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+# -*- coding: utf-8 -*-
 #
 #  KonlpyParser.py
 #  Sonagi

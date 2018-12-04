@@ -109,6 +109,7 @@
 				5BCEA17421B4A5560061A548 /* Sources */,
 				5BCEA17521B4A5560061A548 /* Frameworks */,
 				5BCEA17621B4A5560061A548 /* Resources */,
+				5BBBABEB21B71A31001098E0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -199,6 +200,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5BBBABEB21B71A31001098E0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Resources/KonlpyParser.py",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "chmod +x \"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5BCEA17421B4A5560061A548 /* Sources */ = {
