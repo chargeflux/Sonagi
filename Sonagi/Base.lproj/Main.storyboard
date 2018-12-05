@@ -724,7 +724,7 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="920" height="90"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="TiS-NW-tHs">
+                                                        <textView editable="NO" selectable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="TiS-NW-tHs">
                                                             <rect key="frame" x="0.0" y="0.0" width="920" height="90"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <color key="textColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

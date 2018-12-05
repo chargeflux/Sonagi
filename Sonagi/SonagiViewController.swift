@@ -12,7 +12,7 @@ class SonagiViewController: NSViewController {
     
     @IBOutlet var outputTextView: NSTextView!
     
-    var text: NSAttributedString?
+    var morpheme: NSAttributedString?
     
     var textKR: String? = "저는 내년에 한국에 갈 거예요"
     
@@ -45,23 +45,26 @@ class SonagiViewController: NSViewController {
             let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:font,
                                                               NSAttributedString.Key.foregroundColor:
                                                                 input.posDict[key]!.color!]
-            text = NSAttributedString(string: input.posDict[key]!.morph,attributes:attributes)
-            let textCommon = textKRFullString.commonPrefix(with: (text?.string)!)
+            morpheme = NSAttributedString(string: input.posDict[key]!.morph,attributes:attributes)
+            let textCommon = textKRFullString.commonPrefix(with: (morpheme?.string)!)
             var isWhiteSpace: Bool!
-            if textCommon.count == text?.string.count {
-                (isWhiteSpace, textKRFullString) = checkWhiteSpace(fullString: textKRFullString, commonString: textCommon, textToSet: text!)
+            if textCommon.count == morpheme?.string.count {
+                (isWhiteSpace, textKRFullString) = checkWhiteSpace(fullString: textKRFullString, commonString: textCommon, textToSet: morpheme!)
                 if isWhiteSpace {
-                    outputTextView.textStorage?.append(text!)
+                    outputTextView.textStorage?.append(morpheme!)
+                    setTracking(morpheme: morpheme?.string)
                     outputTextView.textStorage?.append(NSAttributedString(string:" "))
                 }
                 else {
-                    outputTextView.textStorage?.append(text!)
+                    outputTextView.textStorage?.append(morpheme!)
+                    setTracking(morpheme: morpheme?.string)
                 }
             }
             else {
-                (isWhiteSpace, textKRFullString) = checkWhiteSpace(fullString: textKRFullString, commonString: textCommon, textToSet: text!)
-                text = NSAttributedString(string:textCommon, attributes:attributes)
-                outputTextView.textStorage?.append(text!)
+                (isWhiteSpace, textKRFullString) = checkWhiteSpace(fullString: textKRFullString, commonString: textCommon, textToSet: morpheme!)
+                let morphemeModified = NSAttributedString(string:textCommon, attributes:attributes)
+                outputTextView.textStorage?.append(morphemeModified)
+                setTracking(morpheme: morphemeModified.string)
                 if isWhiteSpace {
                     outputTextView.textStorage?.append(NSAttributedString(string:" "))
                 }
@@ -83,9 +86,16 @@ class SonagiViewController: NSViewController {
         return (false, fullString)
     }
     
-    func setTracking() {
-        let area = NSTrackingArea.init(rect: CGRect(origin: outputTextView.textContainerOrigin,size:(text?.size())!), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: nil)
+    var glyphLowerBound: Int = 0
+    
+    var glyphRectPrevWidth: CGFloat!
+    
+    func setTracking(morpheme: String!) {
+        let glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
+        let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
+        let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: nil)
         outputTextView.addTrackingArea(area)
+        glyphLowerBound = glyphUpperBound!
     }
     
     override func mouseEntered(with event: NSEvent) {
@@ -96,4 +106,3 @@ class SonagiViewController: NSViewController {
         print("Exited")
     }
 }
-
