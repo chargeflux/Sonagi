@@ -18,6 +18,8 @@ class SonagiViewController: NSViewController {
     
     var textKRPartOfSpeech: PartOfSpeech?
     
+    var currentInfoPopover = [Int: NSPopover]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeKRText()
@@ -99,11 +101,32 @@ class SonagiViewController: NSViewController {
     }
     
     override func mouseEntered(with event: NSEvent) {
-        let mouseHoverPosition = event.trackingArea?.userInfo!["Position"]
+        let mouseHoverPosition = event.trackingArea?.userInfo!["Position"] as! Int
+        showInfoPopover(morphemeRect: (event.trackingArea?.rect)!,position: mouseHoverPosition)
         print("Entered")
     }
     
     override func mouseExited(with event: NSEvent) {
+        let mouseHoverStopPosition = event.trackingArea?.userInfo!["Position"] as! Int
+        currentInfoPopover[mouseHoverStopPosition]!.close()
         print("Exited")
+    }
+    
+    func showInfoPopover(morphemeRect: NSRect, position: Int) {
+        let infoPopover = createInfoPopover()
+        infoPopover!.show(relativeTo: morphemeRect, of: outputTextView, preferredEdge: NSRectEdge.minY)
+        currentInfoPopover[position] = infoPopover
+    }
+    
+    func createInfoPopover() -> NSPopover? {
+        let infoPopover = NSPopover()
+        let infoPopoverController = NSViewController()
+        infoPopoverController.view = NSView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(200), height: CGFloat(100)))
+        infoPopover.appearance = NSAppearance(named: .vibrantDark)
+        infoPopover.contentViewController = infoPopoverController
+        infoPopover.contentSize = infoPopoverController.view.frame.size
+        infoPopover.behavior = .applicationDefined
+        infoPopover.animates = false
+        return infoPopover
     }
 }
