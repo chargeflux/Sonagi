@@ -33,12 +33,34 @@ class PartOfSpeech {
         
         mutating func tagColor() {
             switch pos {
-            case "Verb":
-                color = NSColor.blue
-            case "Josa":
-                color = NSColor.red
             case "Noun":
-                color = NSColor.purple
+                color = NSColor(red:0.85, green:0, blue:0.4, alpha:1)
+            case "Verb":
+                color = NSColor(red:0.2, green:0.385, blue:0.999, alpha:1)
+            case "Josa":
+                color = NSColor.gray
+            case "Adjective":
+                color = NSColor(red:0.65, green:0.203, blue:0.707, alpha:1)
+            case "Suffix":
+                color = NSColor(red:0.3, green:0.749, blue:0.339, alpha:1)
+            case "Adverb":
+                color = NSColor.blue
+            case "Determiner":
+                color = NSColor.white
+            case "Eomi":
+                color = NSColor.orange
+            case "PreEomi":
+                color = NSColor.orange
+            case "Conjunction":
+                color = NSColor.orange
+            case "Modifier":
+                color = NSColor.systemBlue
+            case "VerbPrefix":
+                color = NSColor.gray
+            case "Exclamation":
+                color = NSColor.gray
+            case "Punctuation":
+                color = NSColor.gray
             default:
                 color = NSColor.white
             }
