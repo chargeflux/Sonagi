@@ -52,19 +52,19 @@ class SonagiViewController: NSViewController {
                 (isWhiteSpace, textKRFullString) = checkWhiteSpace(fullString: textKRFullString, commonString: textCommon, textToSet: morpheme!)
                 if isWhiteSpace {
                     outputTextView.textStorage?.append(morpheme!)
-                    setTracking(morpheme: morpheme?.string)
+                    setTracking(morpheme: morpheme?.string, position: key)
                     outputTextView.textStorage?.append(NSAttributedString(string:" "))
                 }
                 else {
                     outputTextView.textStorage?.append(morpheme!)
-                    setTracking(morpheme: morpheme?.string)
+                    setTracking(morpheme: morpheme?.string, position: key)
                 }
             }
             else {
                 (isWhiteSpace, textKRFullString) = checkWhiteSpace(fullString: textKRFullString, commonString: textCommon, textToSet: morpheme!)
                 let morphemeModified = NSAttributedString(string:textCommon, attributes:attributes)
                 outputTextView.textStorage?.append(morphemeModified)
-                setTracking(morpheme: morphemeModified.string)
+                setTracking(morpheme: morphemeModified.string, position: key)
                 if isWhiteSpace {
                     outputTextView.textStorage?.append(NSAttributedString(string:" "))
                 }
@@ -90,15 +90,16 @@ class SonagiViewController: NSViewController {
     
     var glyphRectPrevWidth: CGFloat!
     
-    func setTracking(morpheme: String!) {
+    func setTracking(morpheme: String!, position: Int) {
         let glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
         let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
-        let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: nil)
+        let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
         outputTextView.addTrackingArea(area)
         glyphLowerBound = glyphUpperBound!
     }
     
     override func mouseEntered(with event: NSEvent) {
+        let mouseHoverPosition = event.trackingArea?.userInfo!["Position"]
         print("Entered")
     }
     
