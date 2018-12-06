@@ -20,6 +20,8 @@ class SonagiViewController: NSViewController {
     
     var currentInfoPopover = [Int: NSPopover]()
     
+    let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeKRText()
@@ -38,13 +40,13 @@ class SonagiViewController: NSViewController {
                 return
             }
         setText(input:textKRPartOfSpeech)
+        self.textKRPartOfSpeech = textKRPartOfSpeech
     }
     
     func setText(input: PartOfSpeech) {
-        let font = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
         var textKRFullString = textKR!
         for key in input.posDict.keys.sorted() {
-            let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:font,
+            let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont,
                                                               NSAttributedString.Key.foregroundColor:
                                                                 input.posDict[key]!.color!]
             morpheme = NSAttributedString(string: input.posDict[key]!.morph,attributes:attributes)
@@ -113,20 +115,47 @@ class SonagiViewController: NSViewController {
     }
     
     func showInfoPopover(morphemeRect: NSRect, position: Int) {
-        let infoPopover = createInfoPopover()
+        let infoPopover = createInfoPopover(position:position)
         infoPopover!.show(relativeTo: morphemeRect, of: outputTextView, preferredEdge: NSRectEdge.minY)
         currentInfoPopover[position] = infoPopover
     }
     
-    func createInfoPopover() -> NSPopover? {
+    func createInfoPopover(position:Int) -> NSPopover? {
+        let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont,
+                                                          NSAttributedString.Key.foregroundColor:
+                                                            textKRPartOfSpeech!.posDict[position]!.color!]
+        let posString = NSAttributedString(string: (textKRPartOfSpeech?.posDict[position]?.pos)!,attributes:attributes)
+        
+        
         let infoPopover = NSPopover()
-        let infoPopoverController = NSViewController()
-        infoPopoverController.view = NSView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(200), height: CGFloat(100)))
+        let infoPopoverViewController = NSViewController()
+        infoPopoverViewController.view = NSView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(200), height: CGFloat(100)))
         infoPopover.appearance = NSAppearance(named: .vibrantDark)
-        infoPopover.contentViewController = infoPopoverController
-        infoPopover.contentSize = infoPopoverController.view.frame.size
+        infoPopover.contentViewController = infoPopoverViewController
+        infoPopover.contentSize = infoPopoverViewController.view.frame.size
         infoPopover.behavior = .applicationDefined
         infoPopover.animates = false
+        
+        let informationTextView = NSTextView(frame: infoPopoverViewController.view.frame)
+        informationTextView.textStorage?.append(posString)
+        informationTextView.backgroundColor = NSColor.clear
+        informationTextView.isSelectable = false
+        informationTextView.isEditable = false
+        infoPopover.contentViewController!.view.addSubview(informationTextView)
+        
         return infoPopover
+    }
+    
+    func clearOutputTextView() {
+        for popover in currentInfoPopover.values {
+            popover.close()
+        }
+        currentInfoPopover.removeAll()
+        
+        for trackingArea in outputTextView.trackingAreas {
+            outputTextView.removeTrackingArea(trackingArea)
+        }
+        
+        outputTextView.textStorage?.deleteCharacters(in: NSMakeRange(0, (outputTextView.textStorage?.string.count)!))
     }
 }
