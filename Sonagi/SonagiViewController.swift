@@ -121,15 +121,20 @@ class SonagiViewController: NSViewController {
     }
     
     func createInfoPopover(position:Int) -> NSPopover? {
-        let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont,
+        let infoFont = NSFont.systemFont(ofSize: 18)
+        let attributeMorpheme: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:infoFont,
+                                                                  NSAttributedString.Key.foregroundColor:
+                                                                    NSColor.white]
+        let stringMorpheme = NSAttributedString(string: (textKRPartOfSpeech?.posDict[position]?.morph)! + " ",attributes: attributeMorpheme)
+        let attributesPOS: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:infoFont,
                                                           NSAttributedString.Key.foregroundColor:
                                                             textKRPartOfSpeech!.posDict[position]!.color!]
-        let posString = NSAttributedString(string: (textKRPartOfSpeech?.posDict[position]?.pos)!,attributes:attributes)
+        let stringPOS = NSAttributedString(string: "(" + (textKRPartOfSpeech?.posDict[position]?.pos)! + ")",attributes:attributesPOS)
         
         
         let infoPopover = NSPopover()
         let infoPopoverViewController = NSViewController()
-        infoPopoverViewController.view = NSView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(200), height: CGFloat(100)))
+        infoPopoverViewController.view = NSView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(400), height: CGFloat(200)))
         infoPopover.appearance = NSAppearance(named: .vibrantDark)
         infoPopover.contentViewController = infoPopoverViewController
         infoPopover.contentSize = infoPopoverViewController.view.frame.size
@@ -137,7 +142,8 @@ class SonagiViewController: NSViewController {
         infoPopover.animates = false
         
         let informationTextView = NSTextView(frame: infoPopoverViewController.view.frame)
-        informationTextView.textStorage?.append(posString)
+        informationTextView.textStorage?.append(stringMorpheme)
+        informationTextView.textStorage?.append(stringPOS)
         informationTextView.backgroundColor = NSColor.clear
         informationTextView.isSelectable = false
         informationTextView.isEditable = false
