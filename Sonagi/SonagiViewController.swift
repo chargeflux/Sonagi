@@ -21,10 +21,18 @@ class SonagiViewController: NSViewController {
     
     var currentInfoPopover = [Int: NSPopover]()
     
-    let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
+    var dictionaryDB: Connection?
     
+    var dictionary: Table?
+    
+    let word = Expression<String>("word")
+    
+    let def = Expression<String>("def")
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        dictionaryDB = try! Connection(Bundle.main.path(forResource: "dictionary", ofType: "db", inDirectory: "Database")!,readonly:true)
+        dictionary = Table("kengdic")
         initializeKRText()
     }
 
@@ -46,6 +54,7 @@ class SonagiViewController: NSViewController {
     
     func setText(input: PartOfSpeech) {
         var textKRFullString = textKR!
+        let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
         for key in input.posDict.keys.sorted() {
             let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont,
                                                               NSAttributedString.Key.foregroundColor:
@@ -126,13 +135,25 @@ class SonagiViewController: NSViewController {
         let attributeMorpheme: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:infoFont,
                                                                   NSAttributedString.Key.foregroundColor:
                                                                     NSColor.white]
-        let stringMorpheme = NSAttributedString(string: (textKRPartOfSpeech?.posDict[position]?.morph)! + " ",attributes: attributeMorpheme)
+        let morph = (textKRPartOfSpeech?.posDict[position]?.morph)!
+        let stringMorpheme = NSAttributedString(string: morph + " ",attributes: attributeMorpheme)
         let attributesPOS: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:infoFont,
                                                           NSAttributedString.Key.foregroundColor:
                                                             textKRPartOfSpeech!.posDict[position]!.color!]
-        let stringPOS = NSAttributedString(string: "(" + (textKRPartOfSpeech?.posDict[position]?.pos)! + ")",attributes:attributesPOS)
+        let stringPOS = NSAttributedString(string: "(" + (textKRPartOfSpeech?.posDict[position]?.pos)! + ")\n\n",attributes:attributesPOS)
         
+        let query = dictionary!.filter(word == morph)
         
+        var definition: String!
+    
+        if let queryResult = try! dictionaryDB!.pluck(query) {
+            definition = queryResult[def]
+        } else {
+            definition = ""
+        }
+        
+        let stringDefinition = NSAttributedString(string:definition,attributes:attributeMorpheme)
+
         let infoPopover = NSPopover()
         let infoPopoverViewController = NSViewController()
         infoPopoverViewController.view = NSView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(400), height: CGFloat(200)))
@@ -145,6 +166,7 @@ class SonagiViewController: NSViewController {
         let informationTextView = NSTextView(frame: infoPopoverViewController.view.frame)
         informationTextView.textStorage?.append(stringMorpheme)
         informationTextView.textStorage?.append(stringPOS)
+        informationTextView.textStorage?.append(stringDefinition)
         informationTextView.backgroundColor = NSColor.clear
         informationTextView.isSelectable = false
         informationTextView.isEditable = false
