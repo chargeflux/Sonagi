@@ -1,0 +1,14 @@
+use_frameworks!
+
+platform :osx, '10.14'
+
+project '../Sonagi.xcodeproj'
+workspace '../Sonagi.xcworkspace'
+
+target 'Sonagi' do
+    pod 'SQLite.swift', '~> 0.11.5'
+end
+
+target 'SonagiTests' do
+    inherit! :search_paths
+end

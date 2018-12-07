@@ -7,13 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45FFE4C74371EE11531EB9EA /* Pods_SonagiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2321B42DA187CF18D9913E22 /* Pods_SonagiTests.framework */; };
 		5B2E2BC421B4AABC0016402F /* SonagiParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2E2BC321B4AABC0016402F /* SonagiParser.swift */; };
 		5B2E2BC621B4AB2C0016402F /* KonlpyParser.py in Resources */ = {isa = PBXBuildFile; fileRef = 5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */; };
+		5B5116B221BAD97F00F3E088 /* Database in Resources */ = {isa = PBXBuildFile; fileRef = 5B5116B121BAD97F00F3E088 /* Database */; };
 		5BCEA17C21B4A5570061A548 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCEA17B21B4A5570061A548 /* AppDelegate.swift */; };
 		5BCEA17E21B4A5570061A548 /* SonagiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCEA17D21B4A5570061A548 /* SonagiViewController.swift */; };
 		5BCEA18021B4A55A0061A548 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BCEA17F21B4A55A0061A548 /* Assets.xcassets */; };
 		5BCEA18321B4A55A0061A548 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BCEA18121B4A55A0061A548 /* Main.storyboard */; };
 		5BCEA18F21B4A55A0061A548 /* SonagiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCEA18E21B4A55A0061A548 /* SonagiTests.swift */; };
+		AEF5E5C34CAFE2BC0945D3D4 /* Pods_Sonagi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07D83D327F01C6B42F383DFA /* Pods_Sonagi.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,8 +30,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		07D83D327F01C6B42F383DFA /* Pods_Sonagi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Sonagi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2321B42DA187CF18D9913E22 /* Pods_SonagiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SonagiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43ED987337DAC881F4A204F5 /* Pods-SonagiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SonagiTests.debug.xcconfig"; path = "Target Support Files/Pods-SonagiTests/Pods-SonagiTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5B2E2BC321B4AABC0016402F /* SonagiParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonagiParser.swift; sourceTree = "<group>"; };
 		5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = KonlpyParser.py; sourceTree = "<group>"; };
+		5B5116B121BAD97F00F3E088 /* Database */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Database; sourceTree = "<group>"; };
 		5BCEA17821B4A5560061A548 /* Sonagi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sonagi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCEA17B21B4A5570061A548 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5BCEA17D21B4A5570061A548 /* SonagiViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonagiViewController.swift; sourceTree = "<group>"; };
@@ -38,6 +45,9 @@
 		5BCEA18A21B4A55A0061A548 /* SonagiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SonagiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCEA18E21B4A55A0061A548 /* SonagiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonagiTests.swift; sourceTree = "<group>"; };
 		5BCEA19021B4A55A0061A548 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		623ECD541C5B3B6598A047BD /* Pods-SonagiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SonagiTests.release.xcconfig"; path = "Target Support Files/Pods-SonagiTests/Pods-SonagiTests.release.xcconfig"; sourceTree = "<group>"; };
+		C762BDBDF153FA4DC3A300D0 /* Pods-Sonagi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sonagi.release.xcconfig"; path = "Target Support Files/Pods-Sonagi/Pods-Sonagi.release.xcconfig"; sourceTree = "<group>"; };
+		C99C0279A3D28B6EEA898941 /* Pods-Sonagi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sonagi.debug.xcconfig"; path = "Target Support Files/Pods-Sonagi/Pods-Sonagi.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AEF5E5C34CAFE2BC0945D3D4 /* Pods_Sonagi.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,18 +63,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45FFE4C74371EE11531EB9EA /* Pods_SonagiTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2E1583AE7963174CE648B6DC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07D83D327F01C6B42F383DFA /* Pods_Sonagi.framework */,
+				2321B42DA187CF18D9913E22 /* Pods_SonagiTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5BCEA16F21B4A5560061A548 = {
 			isa = PBXGroup;
 			children = (
 				5BCEA17A21B4A5560061A548 /* Sonagi */,
 				5BCEA18D21B4A55A0061A548 /* SonagiTests */,
 				5BCEA17921B4A5560061A548 /* Products */,
+				F12EE31E95CB7761BAFF32FF /* Pods */,
+				2E1583AE7963174CE648B6DC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -85,6 +108,7 @@
 				5BCEA18121B4A55A0061A548 /* Main.storyboard */,
 				5BCEA18421B4A55A0061A548 /* Info.plist */,
 				5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */,
+				5B5116B121BAD97F00F3E088 /* Database */,
 				5B2E2BC321B4AABC0016402F /* SonagiParser.swift */,
 			);
 			path = Sonagi;
@@ -99,6 +123,18 @@
 			path = SonagiTests;
 			sourceTree = "<group>";
 		};
+		F12EE31E95CB7761BAFF32FF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C99C0279A3D28B6EEA898941 /* Pods-Sonagi.debug.xcconfig */,
+				C762BDBDF153FA4DC3A300D0 /* Pods-Sonagi.release.xcconfig */,
+				43ED987337DAC881F4A204F5 /* Pods-SonagiTests.debug.xcconfig */,
+				623ECD541C5B3B6598A047BD /* Pods-SonagiTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Dependencies/Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -106,10 +142,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BCEA19321B4A55A0061A548 /* Build configuration list for PBXNativeTarget "Sonagi" */;
 			buildPhases = (
+				A913A021FCDBF5471210FBB5 /* [CP] Check Pods Manifest.lock */,
 				5BCEA17421B4A5560061A548 /* Sources */,
 				5BCEA17521B4A5560061A548 /* Frameworks */,
 				5BCEA17621B4A5560061A548 /* Resources */,
 				5BBBABEB21B71A31001098E0 /* ShellScript */,
+				0D077C33A76F382031E1886B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -124,6 +162,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BCEA19621B4A55A0061A548 /* Build configuration list for PBXNativeTarget "SonagiTests" */;
 			buildPhases = (
+				2012594E570BB7CB1C99FA65 /* [CP] Check Pods Manifest.lock */,
 				5BCEA18621B4A55A0061A548 /* Sources */,
 				5BCEA18721B4A55A0061A548 /* Frameworks */,
 				5BCEA18821B4A55A0061A548 /* Resources */,
@@ -187,6 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B2E2BC621B4AB2C0016402F /* KonlpyParser.py in Resources */,
+				5B5116B221BAD97F00F3E088 /* Database in Resources */,
 				5BCEA18021B4A55A0061A548 /* Assets.xcassets in Resources */,
 				5BCEA18321B4A55A0061A548 /* Main.storyboard in Resources */,
 			);
@@ -202,6 +242,50 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0D077C33A76F382031E1886B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Sonagi/Pods-Sonagi-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Sonagi/Pods-Sonagi-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2012594E570BB7CB1C99FA65 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SonagiTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		5BBBABEB21B71A31001098E0 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -219,6 +303,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "chmod +x \"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
+		A913A021FCDBF5471210FBB5 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Sonagi-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -380,6 +486,7 @@
 		};
 		5BCEA19421B4A55A0061A548 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C99C0279A3D28B6EEA898941 /* Pods-Sonagi.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -397,6 +504,7 @@
 		};
 		5BCEA19521B4A55A0061A548 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C762BDBDF153FA4DC3A300D0 /* Pods-Sonagi.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -414,6 +522,7 @@
 		};
 		5BCEA19721B4A55A0061A548 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43ED987337DAC881F4A204F5 /* Pods-SonagiTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -434,6 +543,7 @@
 		};
 		5BCEA19821B4A55A0061A548 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 623ECD541C5B3B6598A047BD /* Pods-SonagiTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
