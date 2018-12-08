@@ -17,8 +17,10 @@ class SonagiViewController: NSViewController {
     
     var textKR: String? {
         didSet {
-            clearOutputTextView()
-            initializeKRText()
+            let parseKRTextWorkItem = DispatchWorkItem { [weak self] in
+                self!.parseKRText()
+            }
+            DispatchQueue.main.async(execute: parseKRTextWorkItem)
         }
     }
     
@@ -40,15 +42,15 @@ class SonagiViewController: NSViewController {
         super.viewDidLoad()
         dictionaryDB = try! Connection(Bundle.main.path(forResource: "dictionary", ofType: "db", inDirectory: "Database")!,readonly:true)
         dictionary = Table("kengdic")
-        initializeKRText()
+        parseKRText()
         notifications.append(NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification,
             object: nil, queue: nil,
             using: windowDidBecomeKey))
     }
     
-    func initializeKRText() {
-        // MARK: Implement pasteboard - continuing monitor, filter for Korean text only?
+    func parseKRText() {
+        // TODO: filter for Korean text only?
         guard let textKRPartOfSpeech = PartOfSpeech(input: textKR)
             else {
                 return
@@ -79,6 +81,7 @@ class SonagiViewController: NSViewController {
     func setText(input: PartOfSpeech) {
         var textKRFullString = textKR!
         let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
+        clearOutputTextView()
         for key in input.posDict.keys.sorted() {
             let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont,
                                                               NSAttributedString.Key.foregroundColor:
