@@ -7,8 +7,10 @@
 3) Launch `Sonagi.xcworkspace`
 4) This app requires Python 3.6/2.7. The Python script embedded in this app, `KoNLPyParser.py`, for interfacing with KoNLPy assumes you have a Python installation at `/usr/bin/local/python`, which is the default installation from Homebrew. If you have a Python distribution from Anaconda etc., you may change the first line in the Python script to the path of the Python binary you prefer to use
     - If you are unsure what Python installation you have, run `which python` in terminal. If the output is `/usr/bin/python`, then macOS' system Python version is the default and is not recommended unless you are confident/have prior experience in using it. It is recommended to use Homebrew/Anaconda to avoid interacting with the system's Python distribution and avoid having to use `sudo` for installing Python packages
-5) Install the `KoNLPy` package via Pip. Make sure you can successfully import konlpy (`import konlpy`) and the first line of `KoNLPyParser.py` matches your preferred Python distribution and the distribution that has the `KoNLPy` package installed.
-4) Build
+5) Install the `KoNLPy` package via Pip. Make sure you can successfully import `KoNLPy` (`import konlpy`), the first line of `KoNLPyParser.py` matches your preferred Python distribution and is the distribution that has the `KoNLPy` package installed.
+6) Build
+    - The app is confirmed to run on macOS 10.13.6 (macOS High Sierra) 
+
 
 ## Usage
 1) Copy some Korean text and Sonagi will present the parsed text, color-coded by part of speech. 
