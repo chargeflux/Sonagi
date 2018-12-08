@@ -11,8 +11,8 @@
 4) Build
 
 ## Usage
-1) Copy some Korean text and Sonagi will present, color-coded by part of speech. 
-2) Hover over individual words or morphemes and see the definition as a popover
+1) Copy some Korean text and Sonagi will present the parsed text, color-coded by part of speech. 
+2) Hover over individual words or morphemes and see the definition
 3) Sonagi will detect if the user's clipboard has changed when the user switches back to the app and will update the displayed text accordingly.
 
 ## TODO
