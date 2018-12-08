@@ -15,7 +15,12 @@ class SonagiViewController: NSViewController {
     
     var morpheme: NSAttributedString?
     
-    var textKR: String? = "저는 내년에 한국에 갈 거예요"
+    var textKR: String? {
+        didSet {
+            clearOutputTextView()
+            initializeKRText()
+        }
+    }
     
     var textKRPartOfSpeech: PartOfSpeech?
     
@@ -28,28 +33,47 @@ class SonagiViewController: NSViewController {
     let word = Expression<String>("word")
     
     let def = Expression<String>("def")
+    
+    var notifications: [NSObjectProtocol] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         dictionaryDB = try! Connection(Bundle.main.path(forResource: "dictionary", ofType: "db", inDirectory: "Database")!,readonly:true)
         dictionary = Table("kengdic")
         initializeKRText()
-    }
-
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        }
+        notifications.append(NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil, queue: nil,
+            using: windowDidBecomeKey))
     }
     
     func initializeKRText() {
         // MARK: Implement pasteboard - continuing monitor, filter for Korean text only?
-        guard let textKRPartOfSpeech = PartOfSpeech(input: textKR!)
+        guard let textKRPartOfSpeech = PartOfSpeech(input: textKR)
             else {
                 return
             }
         setText(input:textKRPartOfSpeech)
         self.textKRPartOfSpeech = textKRPartOfSpeech
+    }
+    
+    var pasteboardCount: Int = NSPasteboard.general.changeCount
+    
+    func windowDidBecomeKey(_ notification: Notification) {
+        guard let detectedText = checkPasteboardChanged()
+            else {
+                return
+        }
+        textKR = detectedText
+    }
+    
+    func checkPasteboardChanged() -> String? {
+        guard pasteboardCount != NSPasteboard.general.changeCount
+            else {
+                return nil
+        }
+        pasteboardCount = NSPasteboard.general.changeCount
+        return NSPasteboard.general.pasteboardItems?.first?.string(forType: .string)
     }
     
     func setText(input: PartOfSpeech) {

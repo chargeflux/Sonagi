@@ -13,8 +13,6 @@ import Foundation
 class PartOfSpeech {
 
     var inputKR: String!
-    var task = Process()
-    var pipe = Pipe()
     
     struct partOfSpeechTag {
         var morph: String
@@ -70,13 +68,19 @@ class PartOfSpeech {
     
     var posDict: [Int:partOfSpeechTag] = [:]
     
-    init?(input:String) {
-        inputKR = input
+    init?(input:String?) {
+        guard let inputKR = input
+            else {
+                return nil
+        }
+        self.inputKR = inputKR
         parseInputForPOS()
     }
     
     func parseInputForPOS() {
         let filePathURL = Bundle.main.url(forResource: "KonlpyParser", withExtension: "py")
+        let task = Process()
+        let pipe = Pipe()
         task.executableURL = filePathURL
         task.arguments = ["--type", "pos","--input",inputKR]
         task.standardOutput = pipe
