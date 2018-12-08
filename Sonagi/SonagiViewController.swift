@@ -140,13 +140,17 @@ class SonagiViewController: NSViewController {
         let attributesPOS: [NSAttributedString.Key : Any] = [.font: infoFont,
                                                              .foregroundColor:
                                                             textKRPartOfSpeech!.posDict[position]!.color!]
-        let stringPOS = NSAttributedString(string: "(" + (textKRPartOfSpeech?.posDict[position]?.pos)! + ")\n\n",attributes:attributesPOS)
+        let stringPOS = NSAttributedString(string: "(" + (textKRPartOfSpeech?.posDict[position]?.pos)! + ")",
+                                           attributes:attributesPOS)
         
         let query = dictionary!.filter(word == morph).limit(4)
         
-        var definition: String! = ""
+        var definition: String! = "\n"
     
         for (index, queryResult) in try! dictionaryDB!.prepare(query).enumerated() {
+            if index == 0 {
+                definition.append("\n")
+            }
             definition.append(String(index+1) + ". " + queryResult[def] + "\n")
         }
         
@@ -154,22 +158,24 @@ class SonagiViewController: NSViewController {
 
         let infoPopover = NSPopover()
         let infoPopoverViewController = NSViewController()
-        infoPopoverViewController.view = NSView(frame: CGRect(x: 0, y: 0, width: 300, height: 0))
-        infoPopover.appearance = NSAppearance(named: .vibrantDark)
+        
         infoPopover.contentViewController = infoPopoverViewController
+        infoPopover.appearance = NSAppearance(named: .vibrantDark)
         infoPopover.behavior = .applicationDefined
         infoPopover.animates = false
         
-        let informationTextView = NSTextView(frame: infoPopoverViewController.view.frame)
+        let informationTextView = NSTextView(frame: NSRect(x: 0, y: -20, width: 300, height: 0))
         informationTextView.textStorage?.append(stringMorpheme)
         informationTextView.textStorage?.append(stringPOS)
         informationTextView.textStorage?.append(stringDefinition)
         
         informationTextView.sizeToFit()
-        infoPopoverViewController.view.bounds = NSRect(x: -10, y: 10, width: 310, height: 0)
-        infoPopover.contentSize = informationTextView.frame.size
         
-        informationTextView.backgroundColor = NSColor.clear
+        informationTextView.textContainerInset = NSSize(width: 10, height: 10)
+        infoPopoverViewController.view = NSView(frame: informationTextView.frame)
+        infoPopover.contentSize = NSSize(width:informationTextView.frame.size.width, height:informationTextView.frame.size.height-20)
+        
+        informationTextView.backgroundColor = NSColor.black
         informationTextView.isSelectable = false
         informationTextView.isEditable = false
         infoPopover.contentViewController!.view.addSubview(informationTextView)
