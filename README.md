@@ -1,10 +1,13 @@
 # Sonagi
-**Sonagi** is a Swift app that parses and breaks down Korean sentences and shows definitions for each morpheme or word. The parsing algorithm is based on [Open Korean Text Processor](https://github.com/open-korean-text/open-korean-text) and is accessed via [KoNLPy](https://github.com/konlpy/konlpy/), a Python package for Korean NLP. Definitions are based on [kengdic](https://github.com/garfieldnate/kengdic) by Joseph Speigle; `kengdic` is hosted by [garfieldnate](https://github.com/garfieldnate) and is released under MPL 2.0.
+**Sonagi** is a Swift app that parses Korean sentences and shows definitions for each morpheme or word. The parsing algorithm is based on [Open Korean Text Processor](https://github.com/open-korean-text/open-korean-text) and is accessed via [KoNLPy](https://github.com/konlpy/konlpy/), a Python package for Korean NLP. Definitions are based on [kengdic](https://github.com/garfieldnate/kengdic) by Joseph Speigle; `kengdic` is hosted by [garfieldnate](https://github.com/garfieldnate) and is released under MPL 2.0.
 
 ## Compilation
 1) Install Cocoapods if not already installed
 2) Run `pod install` in the folder `Dependencies`
 3) Launch `Sonagi.xcworkspace`
+4) This app requires Python 3.6/2.7. The Python script embedded in this app, `KoNLPyParser.py`, for interfacing with KoNLPy assumes you have a Python installation at `/usr/bin/local/python`, which is the default installation from Homebrew. If you have a Python distribution from Anaconda etc., you may change the first line in the Python script to the path of the Python binary you prefer to use
+    - If you are unsure what Python installation you have, run `which python` in terminal. If the output is `/usr/bin/python`, then macOS' system Python version is the default and is not recommended unless you are confident/have prior experience in using it. It is recommended to use Homebrew/Anaconda to avoid interacting with the system's Python distribution and avoid having to use `sudo` for installing Python packages
+5) Install the `KoNLPy` package via Pip. Make sure you can successfully import konlpy (`import konlpy`) and the first line of `KoNLPyParser.py` matches your preferred Python distribution and the distribution that has the `KoNLPy` package installed.
 4) Build
 
 ## Usage
@@ -15,6 +18,8 @@
 ## TODO
 1) Implement history
 2) Clean up definitions before presenting, e.g., spacing, abbreviations
+3) Add filter for Korean text
+4) Scrolling for more than 2 lines of text
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

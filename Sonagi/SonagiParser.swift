@@ -11,17 +11,29 @@ import Foundation
 
 
 class PartOfSpeech {
+    /// Holds the part of speech tagging output from Open Korean Text Processor (Okt) for an input string
 
     var inputKR: String!
     
     struct partOfSpeechTag {
+        /// Holds an individual part of speech tag
+        
+        /// A morpheme/word detected by Okt
         var morph: String
+        
+        /// The part of speech tag for the detected morpheme
         var pos: String
+        
+        /// The color associated with the part of speech tag
         var color: NSColor?
         
         init(morph: String, pos: String) {
+            /// morph:  A morpheme/word detected by Okt
+            /// pos: The part of speech tag for the detected morpheme
             self.morph = morph
             self.pos = pos
+            
+            /// Determine color for the tag that was set
             tagColor()
         }
         
@@ -69,6 +81,7 @@ class PartOfSpeech {
     var posDict: [Int:partOfSpeechTag] = [:]
     
     init?(input:String?) {
+        /// input: The input string to be parsed
         guard let inputKR = input
             else {
                 return nil
@@ -78,6 +91,7 @@ class PartOfSpeech {
     }
     
     func parseInputForPOS() {
+        /// Parse input for part of speech tags
         let filePathURL = Bundle.main.url(forResource: "KonlpyParser", withExtension: "py")
         let task = Process()
         let pipe = Pipe()
