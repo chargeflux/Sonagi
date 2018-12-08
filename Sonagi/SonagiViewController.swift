@@ -137,29 +137,26 @@ class SonagiViewController: NSViewController {
                                                                     NSColor.white]
         let morph = (textKRPartOfSpeech?.posDict[position]?.morph)!
         let stringMorpheme = NSAttributedString(string: morph + " ",attributes: attributeMorpheme)
-        let attributesPOS: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:infoFont,
-                                                          NSAttributedString.Key.foregroundColor:
+        let attributesPOS: [NSAttributedString.Key : Any] = [.font: infoFont,
+                                                             .foregroundColor:
                                                             textKRPartOfSpeech!.posDict[position]!.color!]
         let stringPOS = NSAttributedString(string: "(" + (textKRPartOfSpeech?.posDict[position]?.pos)! + ")\n\n",attributes:attributesPOS)
         
-        let query = dictionary!.filter(word == morph)
+        let query = dictionary!.filter(word == morph).limit(4)
         
-        var definition: String!
+        var definition: String! = ""
     
-        if let queryResult = try! dictionaryDB!.pluck(query) {
-            definition = queryResult[def]
-        } else {
-            definition = ""
+        for (index, queryResult) in try! dictionaryDB!.prepare(query).enumerated() {
+            definition.append(String(index+1) + ". " + queryResult[def] + "\n")
         }
         
         let stringDefinition = NSAttributedString(string:definition,attributes:attributeMorpheme)
 
         let infoPopover = NSPopover()
         let infoPopoverViewController = NSViewController()
-        infoPopoverViewController.view = NSView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(400), height: CGFloat(200)))
+        infoPopoverViewController.view = NSView(frame: CGRect(x: 0, y: 0, width: 300, height: 0))
         infoPopover.appearance = NSAppearance(named: .vibrantDark)
         infoPopover.contentViewController = infoPopoverViewController
-        infoPopover.contentSize = infoPopoverViewController.view.frame.size
         infoPopover.behavior = .applicationDefined
         infoPopover.animates = false
         
@@ -167,6 +164,11 @@ class SonagiViewController: NSViewController {
         informationTextView.textStorage?.append(stringMorpheme)
         informationTextView.textStorage?.append(stringPOS)
         informationTextView.textStorage?.append(stringDefinition)
+        
+        informationTextView.sizeToFit()
+        infoPopoverViewController.view.bounds = NSRect(x: -10, y: 10, width: 310, height: 0)
+        infoPopover.contentSize = informationTextView.frame.size
+        
         informationTextView.backgroundColor = NSColor.clear
         informationTextView.isSelectable = false
         informationTextView.isEditable = false
