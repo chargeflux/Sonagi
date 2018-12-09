@@ -21,7 +21,6 @@
 1) Implement history
 2) Clean up definitions before presenting, e.g., spacing, abbreviations
 3) Add filter for Korean text
-4) Scrolling for more than 2 lines of text
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
@@ -31,6 +30,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 - [Open Korean Text Processor](https://github.com/open-korean-text/open-korean-text) (2.1.0 *according to KoNLPy*)
 - [SQLite.swift](https://github.com/stephencelis/SQLite.swift) (0.11.5)
 - [kengdic](https://github.com/garfieldnate/kengdic)
+    - The SQL file for `kengdic` used in **Sonagi** can found in this repository [here](./Sonagi/Database/kengdic.sql)
 
 ## License
 [MIT](./LICENSE.txt)
