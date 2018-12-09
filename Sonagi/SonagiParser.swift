@@ -105,8 +105,14 @@ class PartOfSpeech {
         let outArray = out?.components(separatedBy: "\n")
         
         for (index, entry) in outArray!.enumerated() {
-            var tempArr = entry.components(separatedBy: "/")
-            posDict.updateValue(partOfSpeechTag.init(morph: tempArr[0], pos: tempArr[1]), forKey: index)
+            guard let slashSeparatorIndex = entry.lastIndex(of: "/")
+                else {
+                    return
+            }
+            let slashSeparatorIndexAfter = entry.index(after: slashSeparatorIndex)
+            let detectedMorph = String(entry[..<slashSeparatorIndex])
+            let detectedPOS = String(entry[slashSeparatorIndexAfter...])
+            posDict.updateValue(partOfSpeechTag.init(morph: detectedMorph, pos: detectedPOS), forKey: index)
         }
     }
 }
