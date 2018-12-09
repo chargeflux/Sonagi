@@ -210,13 +210,17 @@ class SonagiViewController: NSViewController {
     ///     - morpheme: The morpheme/word for which a NSTracking area is to be added
     ///     - position: The position of the morpheme/word in the overall text string
     func setTracking(morpheme: String!, position: Int) {
+        // Make sure boundRect will be returned for glyphs on next line to avoid multi-line bounding rect
+        if glyphLowerBound != 0 && glyphLowerBound % 39 == 0 { //FIXME: Too fragile and might be dependent on font/font size
+            glyphLowerBound += 1
+        }
         let glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
         let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
         let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
         outputTextView.addTrackingArea(area)
         glyphLowerBound = glyphUpperBound!
     }
-    
+
     override func mouseEntered(with event: NSEvent) {
         let mouseHoverPosition = event.trackingArea?.userInfo!["Position"] as! Int
         // Checks if infoPopover already exists, else shows a newly created one
@@ -255,9 +259,7 @@ class SonagiViewController: NSViewController {
         let attributeMorpheme: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:infoFont,
                                                                   NSAttributedString.Key.foregroundColor:
                                                                     NSColor.white]
-        
-        // FIXME: Use morpheme returned by Okt instead of commonText for infoPopover when Okt morpheme differs from
-        // what is in `textKR`?
+
         let morph = (textKRPartOfSpeech?.posDict[position]?.morph)!
         let stringMorpheme = NSAttributedString(string: morph + " ",attributes: attributeMorpheme)
         let attributesPOS: [NSAttributedString.Key : Any] = [.font: infoFont,
@@ -322,5 +324,7 @@ class SonagiViewController: NSViewController {
         }
         
         outputTextView.textStorage?.deleteCharacters(in: NSMakeRange(0, (outputTextView.textStorage?.string.count)!))
+        
+        glyphLowerBound = 0
     }
 }
