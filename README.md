@@ -1,6 +1,8 @@
 # Sonagi
 **Sonagi** is a Swift app that parses Korean sentences and shows definitions for each morpheme or word. The parsing algorithm is based on [Open Korean Text Processor](https://github.com/open-korean-text/open-korean-text) and is accessed via [KoNLPy](https://github.com/konlpy/konlpy/), a Python package for Korean NLP. Definitions are based on [kengdic](https://github.com/garfieldnate/kengdic) by Joseph Speigle; `kengdic` is hosted by [garfieldnate](https://github.com/garfieldnate) and is released under MPL 2.0.
 
+This app is currently in an alpha state so it may not work in the way one would expect and doesn't handle all the different kinds of input at this stage. However, it is continually iterated upon!
+
 ## Compilation
 1) Install Cocoapods if not already installed
 2) Run `pod install` in the folder `Dependencies`
