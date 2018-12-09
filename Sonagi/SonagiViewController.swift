@@ -161,6 +161,36 @@ class SonagiViewController: NSViewController {
                 }
             }
             else {
+                // Handles case where the expected morpheme parsed from textKRFullString does not match
+                // the resulting morpheme from Okt at all
+                if textCommon == "" {
+                    let textKRFullStringBefore = textKRFullString
+                    (isWhiteSpace, textKRFullString) = checkWhiteSpaceSlice(fullString: textKRFullString, commonString: textCommon)
+                    var textKRFullStringBeforeSliceIndex = textKRFullStringBefore.range(of: textKRFullString)?.lowerBound
+                    if isWhiteSpace {
+                        textKRFullStringBeforeSliceIndex = textKRFullStringBefore.index(before: textKRFullStringBeforeSliceIndex!)
+                    }
+                    else {
+                        // Handles case where no slicing of textKRFullString occured
+                        if textKRFullString == textKRFullStringBefore {
+                            let morphemeModified = NSAttributedString(string:textKRFullString,attributes:attributes)
+                            outputTextView.textStorage?.append(morphemeModified)
+                            setTracking(morpheme: morphemeModified.string, position: key)
+                            continue
+                        }
+                    }
+                    
+                    // Uses textKRFullString's morpheme/word instead of Okt's morpheme to append to outputTextView's string
+                    let textCommonNew = textKRFullStringBefore[textKRFullStringBefore.startIndex..<textKRFullStringBeforeSliceIndex!]
+                    let morphemeModified = NSAttributedString(string:String(textCommonNew), attributes:attributes)
+                    outputTextView.textStorage?.append(morphemeModified)
+                    if isWhiteSpace {
+                        outputTextView.textStorage?.append(NSAttributedString(string:" "))
+                    }
+                    setTracking(morpheme: morphemeModified.string, position: key)
+                    continue
+                }
+                
                 // If the morpheme returned by Okt does not match what is next in textKRFullString, append `commonText` to
                 // the string in outputTextView instead
                 (isWhiteSpace, textKRFullString) = checkWhiteSpaceSlice(fullString: textKRFullString, commonString: textCommon)
@@ -184,6 +214,18 @@ class SonagiViewController: NSViewController {
     ///     - Bool: If there is a whitespace after `commonString`
     ///     - String: The sliced fullString after any white space or the last `commonString` character in `fullString`
     func checkWhiteSpaceSlice(fullString: String, commonString: String) -> (Bool?, String) {
+        // Handles case where commonString is empy because the morpheme returned by Okt is different from what is in fullString
+        guard commonString != ""
+            else {
+                if let afterStartIndex = fullString.index(fullString.startIndex,offsetBy: 1, limitedBy: fullString.endIndex) as String.Index?, afterStartIndex != fullString.endIndex {
+                    if fullString[afterStartIndex] == " " {
+                        return (true, String(fullString[fullString.index(after:afterStartIndex)...]))
+                    }
+                    return (false, String(fullString[afterStartIndex...]))
+                }
+                return (false, fullString)
+        }
+        
         /// Orients `commonString` to `fullString` and get the last index where `commonString` matches `fullString`
         let lastCommonIndex = fullString.index(fullString.startIndex, offsetBy: commonString.count-1)
         
