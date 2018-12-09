@@ -107,8 +107,8 @@
 				5BCEA17F21B4A55A0061A548 /* Assets.xcassets */,
 				5BCEA18121B4A55A0061A548 /* Main.storyboard */,
 				5BCEA18421B4A55A0061A548 /* Info.plist */,
-				5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */,
 				5B5116B121BAD97F00F3E088 /* Database */,
+				5B2E2BC521B4AB2C0016402F /* KonlpyParser.py */,
 				5B2E2BC321B4AABC0016402F /* SonagiParser.swift */,
 			);
 			path = Sonagi;
