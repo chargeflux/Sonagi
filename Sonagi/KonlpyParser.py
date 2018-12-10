@@ -26,5 +26,8 @@ input = unicodedata.normalize('NFC', input) #NFD doesn't work
 okt = Okt()
 
 if args.type == "pos":
-    pos = okt.pos(input,norm=True, stem=True,join=True)
-    sys.stdout.buffer.write('\n'.join(pos).encode('utf-8'))
+    pos_no_stemming = okt.pos(input,norm=True, stem=False,join=True)
+    pos_with_stemming = okt.pos(input,norm=True, stem=True,join=True)
+    sys.stdout.buffer.write('\n'.join(pos_no_stemming).encode('utf-8'))
+    sys.stdout.buffer.write('\nStemming\n'.encode('utf-8'))
+    sys.stdout.buffer.write('\n'.join(pos_with_stemming).encode('utf-8'))

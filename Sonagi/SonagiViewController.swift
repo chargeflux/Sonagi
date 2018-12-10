@@ -46,6 +46,9 @@ class SonagiViewController: NSViewController {
     
     let def = Expression<String>("def")
     
+    /// Track change count of User's pasteboard, which changes every time the pasteboard is changed
+    var pasteboardCount: Int = NSPasteboard.general.changeCount
+    
     /// Holds any observers that are registered to Notification center
     var observers: [NSObjectProtocol] = []
 
@@ -81,12 +84,9 @@ class SonagiViewController: NSViewController {
         // Set the text in outputTextView (Sonagi's window) with a parsed/tagged form of `textKR`
         setText(input:textKRPartOfSpeech)
         
-        // updates the current instance of textKRPartOfSpeech with a parsed/tagged form of `textKR`
+        // Updates the current instance of textKRPartOfSpeech with a parsed/tagged form of `textKR`
         self.textKRPartOfSpeech = textKRPartOfSpeech
     }
-    
-    /// Track change count of User's pasteboard, which changes every time the pasteboard is changed
-    var pasteboardCount: Int = NSPasteboard.general.changeCount
     
     /// Executed whenever the app becomes the key window
     /// Checks if pasteboard changes and sets `textKR` with the new string retrieved from User's pasteboard
@@ -121,25 +121,23 @@ class SonagiViewController: NSViewController {
     /// - Parameters:
     ///     - input: the `PartOfSpeech` object to be processed and set in `outputTextView`
     func setText(input: PartOfSpeech) {
-        // textKRFullString will be sliced per iteration of the `posDict` to maintain position
+        /// textKRFullString will be sliced per iteration of `posDictNotStemmed` to maintain position
         var textKRFullString = textKR!
         let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
         clearOutputTextView()
         
         // Sort dictionary by index in ascending order
-        for key in input.posDict.keys.sorted() {
+        for key in input.posDictNotStemmed.keys.sorted() {
             
             /// Set attributes for morpheme/word detected by Open Korean Text Processor (Okt), especially color according to tag
             let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont,
                                                               NSAttributedString.Key.foregroundColor:
-                                                                input.posDict[key]!.color!]
-            let morpheme = NSAttributedString(string: input.posDict[key]!.morph,attributes:attributes)
+                                                                input.posDictNotStemmed[key]!.color!]
+            
+            let morpheme = NSAttributedString(string: input.posDictNotStemmed[key]!.morph,attributes:attributes)
             
             /// The part of `textKRFullString` that matches the morpheme in current iteration
             let textCommon = textKRFullString.commonPrefix(with: (morpheme.string))
-            // Note: the morpheme/word returned by Okt may not match what is in `textKR`/`textKRFullString`,
-            // e.g., 갈 is detected as 갈다 by Okt. `commonPrefix` only returns what is in `textKRFullString` itself
-            // to avoid changing what the user wants to analyze.
             
             /// Okt does not detect whitespace and has to be accounted for
             var isWhiteSpace: Bool!
@@ -160,48 +158,6 @@ class SonagiViewController: NSViewController {
                     setTracking(morpheme: morpheme.string, position: key)
                 }
             }
-            else {
-                // Handles case where the expected morpheme parsed from textKRFullString does not match
-                // the resulting morpheme from Okt at all
-                if textCommon == "" {
-                    let textKRFullStringBefore = textKRFullString
-                    (isWhiteSpace, textKRFullString) = checkWhiteSpaceSlice(fullString: textKRFullString, commonString: textCommon)
-                    var textKRFullStringBeforeSliceIndex = textKRFullStringBefore.range(of: textKRFullString)?.lowerBound
-                    if isWhiteSpace {
-                        textKRFullStringBeforeSliceIndex = textKRFullStringBefore.index(before: textKRFullStringBeforeSliceIndex!)
-                    }
-                    else {
-                        // Handles case where no slicing of textKRFullString occured
-                        if textKRFullString == textKRFullStringBefore {
-                            let morphemeModified = NSAttributedString(string:textKRFullString,attributes:attributes)
-                            outputTextView.textStorage?.append(morphemeModified)
-                            setTracking(morpheme: morphemeModified.string, position: key)
-                            continue
-                        }
-                    }
-                    
-                    // Uses textKRFullString's morpheme/word instead of Okt's morpheme to append to outputTextView's string
-                    let textCommonNew = textKRFullStringBefore[textKRFullStringBefore.startIndex..<textKRFullStringBeforeSliceIndex!]
-                    let morphemeModified = NSAttributedString(string:String(textCommonNew), attributes:attributes)
-                    outputTextView.textStorage?.append(morphemeModified)
-                    if isWhiteSpace {
-                        outputTextView.textStorage?.append(NSAttributedString(string:" "))
-                    }
-                    setTracking(morpheme: morphemeModified.string, position: key)
-                    continue
-                }
-                
-                // If the morpheme returned by Okt does not match what is next in textKRFullString, append `commonText` to
-                // the string in outputTextView instead
-                (isWhiteSpace, textKRFullString) = checkWhiteSpaceSlice(fullString: textKRFullString, commonString: textCommon)
-                let morphemeModified = NSAttributedString(string:textCommon, attributes:attributes)
-                outputTextView.textStorage?.append(morphemeModified)
-                setTracking(morpheme: morphemeModified.string, position: key)
-                if isWhiteSpace {
-                    outputTextView.textStorage?.append(NSAttributedString(string:" "))
-                }
-                
-            }
         }
     }
     
@@ -214,17 +170,6 @@ class SonagiViewController: NSViewController {
     ///     - Bool: If there is a whitespace after `commonString`
     ///     - String: The sliced fullString after any white space or the last `commonString` character in `fullString`
     func checkWhiteSpaceSlice(fullString: String, commonString: String) -> (Bool?, String) {
-        // Handles case where commonString is empy because the morpheme returned by Okt is different from what is in fullString
-        guard commonString != ""
-            else {
-                if let afterStartIndex = fullString.index(fullString.startIndex,offsetBy: 1, limitedBy: fullString.endIndex) as String.Index?, afterStartIndex != fullString.endIndex {
-                    if fullString[afterStartIndex] == " " {
-                        return (true, String(fullString[fullString.index(after:afterStartIndex)...]))
-                    }
-                    return (false, String(fullString[afterStartIndex...]))
-                }
-                return (false, fullString)
-        }
         
         /// Orients `commonString` to `fullString` and get the last index where `commonString` matches `fullString`
         let lastCommonIndex = fullString.index(fullString.startIndex, offsetBy: commonString.count-1)

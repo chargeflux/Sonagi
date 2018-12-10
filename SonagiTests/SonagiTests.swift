@@ -35,16 +35,6 @@ class SonagiTests: XCTestCase {
                                                      5: partOfSpeechTag.init(morph: "에", pos: "Josa")]
         posDictTestIterator(testPosDict: pos!, expectedPosDict: correctPosDict, funcName: "testSonagiParserPOS", testNumber: 1)
         
-//        for key in correctPosDict.keys {
-//            // Check for equality in partOfSpeechTag struct values
-//            XCTAssertTrue(correctPosDict[key]!.morph == pos?.posDict[key]!.morph,"Incorrect detection of morpheme")
-//            XCTAssertTrue(correctPosDict[key]!.pos == pos?.posDict[key]!.pos,"Incorrect detection of part of speech")
-//            XCTAssertTrue(correctPosDict[key]!.color == pos?.posDict[key]!.color,"Incorrect detection of color")
-//
-//            // Verify Equatable func override
-//            XCTAssertTrue(correctPosDict[key]! == (pos?.posDict[key])!, "POS tagging is incorrect")
-//        }
-        
         // Check for member count for partOfSpeechTag struct
         let partOfSpeechTagMirror = Mirror(reflecting: samplePartOfSpeechTag)
         XCTAssertEqual(partOfSpeechTagMirror.children.count, 3, "The member count of partOfSpeechTag struct has changed; update equality operator and add test cases for equality")

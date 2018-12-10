@@ -80,6 +80,8 @@ class PartOfSpeech {
     
     var posDict: [Int:partOfSpeechTag] = [:]
     
+    var posDictNotStemmed: [Int:partOfSpeechTag] = [:]
+    
     init?(input:String?) {
         /// input: The input string to be parsed
         guard let inputKR = input
@@ -102,9 +104,17 @@ class PartOfSpeech {
         let handle = pipe.fileHandleForReading
         let data = handle.readDataToEndOfFile()
         let out = String(data: data, encoding: String.Encoding.utf8)
-        let outArray = out?.components(separatedBy: "\n")
+        guard let outSplit = out?.components(separatedBy: "\nStemming\n")
+            else {
+                return
+        }
         
-        for (index, entry) in outArray!.enumerated() {
+        let outNotStemmed = outSplit[0]
+        let outStemmed = outSplit[1]
+        let outArrayNotStemmed = outNotStemmed.components(separatedBy: "\n") // Necessary for building outputTextView's sentence
+        let outArrayStemmed = outStemmed.components(separatedBy: "\n") // Necessary for dictionary lookup
+        
+        for (index, entry) in outArrayStemmed.enumerated() {
             guard let slashSeparatorIndex = entry.lastIndex(of: "/")
                 else {
                     return
@@ -113,6 +123,17 @@ class PartOfSpeech {
             let detectedMorph = String(entry[..<slashSeparatorIndex])
             let detectedPOS = String(entry[slashSeparatorIndexAfter...])
             posDict.updateValue(partOfSpeechTag.init(morph: detectedMorph, pos: detectedPOS), forKey: index)
+        }
+        
+        for (index, entry) in outArrayNotStemmed.enumerated() {
+            guard let slashSeparatorIndex = entry.lastIndex(of: "/")
+                else {
+                    return
+            }
+            let slashSeparatorIndexAfter = entry.index(after: slashSeparatorIndex)
+            let detectedMorph = String(entry[..<slashSeparatorIndex])
+            let detectedPOS = String(entry[slashSeparatorIndexAfter...])
+            posDictNotStemmed.updateValue(partOfSpeechTag.init(morph: detectedMorph, pos: detectedPOS), forKey: index)
         }
     }
 }
