@@ -128,6 +128,7 @@ class SonagiViewController: NSViewController {
         
         // Sort dictionary by index in ascending order
         for key in input.posDictNotStemmed.keys.sorted() {
+            // Inherent assumption that posDictNotStemmed == textKR, aside from white space.
             
             /// Set attributes for morpheme/word detected by Open Korean Text Processor (Okt), especially color according to tag
             let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont,
@@ -136,43 +137,37 @@ class SonagiViewController: NSViewController {
             
             let morpheme = NSAttributedString(string: input.posDictNotStemmed[key]!.morph,attributes:attributes)
             
-            /// The part of `textKRFullString` that matches the morpheme in current iteration
-            let textCommon = textKRFullString.commonPrefix(with: (morpheme.string))
-            
             /// Okt does not detect whitespace and has to be accounted for
             var isWhiteSpace: Bool!
             
-            if textCommon.count == morpheme.string.count {
-                // Note checkWhiteSpaceSlice checks if there is a whitespace and slices textKRFullString as well
-                (isWhiteSpace, textKRFullString) = checkWhiteSpaceSlice(fullString: textKRFullString, commonString: textCommon)
-                if isWhiteSpace {
-                    outputTextView.textStorage?.append(morpheme)
-                    
-                    // Adds NSTracking area
-                    setTracking(morpheme: morpheme.string, position: key)
-                    // Adds whitespace after new morpheme/word in the text string in outputTextView to match textKRFullString
-                    outputTextView.textStorage?.append(NSAttributedString(string:" "))
-                }
-                else {
-                    outputTextView.textStorage?.append(morpheme)
-                    setTracking(morpheme: morpheme.string, position: key)
-                }
+            // Note checkWhiteSpaceSlice checks if there is a whitespace and slices textKRFullString as well
+            (isWhiteSpace, textKRFullString) = checkWhiteSpaceSlice(fullString: textKRFullString, morpheme: morpheme.string)
+            if isWhiteSpace {
+                outputTextView.textStorage?.append(morpheme)
+                
+                // Adds NSTracking area
+                setTracking(morpheme: morpheme.string, position: key)
+                // Adds whitespace after new morpheme/word in the text string in outputTextView to match textKRFullString
+                outputTextView.textStorage?.append(NSAttributedString(string:" "))
+            }
+            else {
+                outputTextView.textStorage?.append(morpheme)
+                setTracking(morpheme: morpheme.string, position: key)
             }
         }
     }
     
-    /// Checks if there is a white space after the morpheme/word from Okt and slices `fullString` (e.g., `textKRFullString`) after
-    /// whitespace or the last `commonString` character in `fullString`.
+    /// Checks if there is a white space after the morpheme/word from Okt in `fullString` and slices `fullString` (e.g., `textKRFullString`) after whitespace or the last `morpheme` character in `fullString`.
     /// - Parameters:
     ///     - fullString: The full string to check against for whitespace and to be sliced
-    ///     - commonString: The string that will be checked against fullString for orientation and whitespace
+    ///     - morpheme: The string that will be checked against fullString for orientation and whitespace
     /// - Returns:
-    ///     - Bool: If there is a whitespace after `commonString`
-    ///     - String: The sliced fullString after any white space or the last `commonString` character in `fullString`
-    func checkWhiteSpaceSlice(fullString: String, commonString: String) -> (Bool?, String) {
+    ///     - Bool: If there is a whitespace after `morpheme`
+    ///     - String: The sliced fullString after any white space or the last `morpheme` character in `fullString`
+    func checkWhiteSpaceSlice(fullString: String, morpheme: String) -> (Bool?, String) {
         
-        /// Orients `commonString` to `fullString` and get the last index where `commonString` matches `fullString`
-        let lastCommonIndex = fullString.index(fullString.startIndex, offsetBy: commonString.count-1)
+        /// Orients `morpheme` to `fullString` and get the last index where `morpheme` matches `fullString`
+        let lastCommonIndex = fullString.index(fullString.startIndex, offsetBy: morpheme.count-1)
         
         // if afterLastCommonIndex == fullString.endIndex, function does not return nil; necessary to check
         if let afterLastCommonIndex = fullString.index(lastCommonIndex,offsetBy: 1, limitedBy: fullString.endIndex) as String.Index?, afterLastCommonIndex != fullString.endIndex {
@@ -180,7 +175,7 @@ class SonagiViewController: NSViewController {
                     // returns true and sliced `fullString` after whitespace
                     return (true, String(fullString[fullString.index(after:afterLastCommonIndex)...]))
                 }
-            // returns false and sliced `fullString` after the last `commonString` character in `fullString`
+            // returns false and sliced `fullString` after the last `morpheme` character in `fullString`
             return (false, String(fullString[afterLastCommonIndex...]))
         }
         // fullString can't be sliced
