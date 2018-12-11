@@ -20,6 +20,10 @@ class SonagiViewController: NSViewController {
             let parseKRTextWorkItem = DispatchWorkItem { [weak self] in
                 self!.parseKRText()
             }
+            let getLayoutLineLimitsItem = DispatchWorkItem { [weak self] in
+                self!.calculateGlyphsPerLine()
+            }
+            DispatchQueue.main.async(execute: getLayoutLineLimitsItem)
             DispatchQueue.main.async(execute: parseKRTextWorkItem)
         }
     }
@@ -29,6 +33,8 @@ class SonagiViewController: NSViewController {
     
     /// Holds the PartOfSpeech class for the current instance of `textKR`
     var textKRPartOfSpeech: PartOfSpeech?
+    
+    let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
     
     /// Holds all information popovers for the current instance of `textKR`
     /// It is indexed by word order in `textKR`
@@ -51,6 +57,8 @@ class SonagiViewController: NSViewController {
     
     /// Holds any observers that are registered to Notification center
     var observers: [NSObjectProtocol] = []
+    
+    var lineCharacterLimit: [Int:Int] = [:]
 
     override func viewDidLoad() {
         // TODO: detect and parse text on first launch?
@@ -66,9 +74,27 @@ class SonagiViewController: NSViewController {
             using: windowDidBecomeKey))
     }
     
+    func calculateGlyphsPerLine() {
+        let tempOutputTextView: NSTextView = NSTextView()
+        let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont]
+        tempOutputTextView.frame = outputTextView.frame
+        tempOutputTextView.textStorage?.append(NSAttributedString(string: textKR!,attributes: attributes))
+        var numberOfLines: Int = 0
+        var index: Int = 0
+        let numberOfGlyphs = tempOutputTextView.layoutManager?.numberOfGlyphs
+        var lineRange = NSRange()
+        while index < numberOfGlyphs! {
+            tempOutputTextView.layoutManager?.lineFragmentRect(forGlyphAt: index, effectiveRange: &lineRange)
+            index = NSMaxRange(lineRange)
+            lineCharacterLimit[numberOfLines] = lineRange.upperBound + 1
+            numberOfLines += 1
+            lineRange = NSRange()
+        }
+    }
+    
     func cleanRawText() {
         rawText = rawText!.trimmingCharacters(in: .whitespaces)
-        rawText = rawText?.replacingOccurrences(of: "\n", with: " ") // FIXME: Should allow for newlines in user's content
+        rawText = rawText?.replacingOccurrences(of: "\n", with: " ")
         if (rawText?.contains("  "))! {
             rawText = rawText?.replacingOccurrences(of: "[ ]+", with: " ", options: .regularExpression, range: nil)
         }
@@ -123,7 +149,6 @@ class SonagiViewController: NSViewController {
     func setText(input: PartOfSpeech) {
         /// textKRFullString will be sliced per iteration of `posDictNotStemmed` to maintain position
         var textKRFullString = textKR!
-        let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
         clearOutputTextView()
         
         // Sort dictionary by index in ascending order
@@ -183,8 +208,9 @@ class SonagiViewController: NSViewController {
     }
     
     /// Tracks the position of the last morpheme/word in outputTextView's string
-    var glyphLowerBound: Int = 0 // FIXME: Use setTracking's position parameter in place of glyphLowerBound?
+    var glyphLowerBound: Int = 0
 
+    var currentLinePosition: Int = 0
     
     /// Sets a NSTrackingArea for each morpheme/word detected by Okt in outputTextView with "position" key that holds the
     /// position of the morpheme in the overall text string.
@@ -193,11 +219,28 @@ class SonagiViewController: NSViewController {
     ///     - position: The position of the morpheme/word in the overall text string
     func setTracking(morpheme: String!, position: Int) {
         // Make sure boundRect will be returned for glyphs on next line to avoid multi-line bounding rect
-        if glyphLowerBound != 0 && glyphLowerBound % 39 == 0 { //FIXME: Too fragile and might be dependent on font/font size
+        if glyphLowerBound == (lineCharacterLimit[currentLinePosition]!) {
             glyphLowerBound += 1
+            currentLinePosition += 1
         }
-        let glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
-        let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
+        var glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
+        if glyphLowerBound == glyphUpperBound {
+            glyphLowerBound += 1
+            let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(lineCharacterLimit[currentLinePosition-1]!, 1), in: outputTextView.textContainer!)
+
+            let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
+            outputTextView.addTrackingArea(area)
+            glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
+        }
+        var glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
+        if glyphRect!.size.width > (outputTextView.frame.width - 20) { // TODO: Need case for no space before word split
+            let lineBreak = NSAttributedString(string: "\n")
+            outputTextView.textStorage?.insert(lineBreak, at: glyphLowerBound)
+            if outputTextView.textStorage!.string.contains("\n ") {
+                outputTextView.textStorage?.deleteCharacters(in: NSMakeRange(glyphLowerBound+1, 1))
+            }
+            glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound+1, morpheme!.count), in: outputTextView.textContainer!)
+        }
         let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
         outputTextView.addTrackingArea(area)
         glyphLowerBound = glyphUpperBound!
@@ -218,7 +261,7 @@ class SonagiViewController: NSViewController {
     override func mouseExited(with event: NSEvent) {
         let mouseHoverStopPosition = event.trackingArea?.userInfo!["Position"] as! Int
         currentInfoPopover[mouseHoverStopPosition]!.close()
-    }
+    } // FIXME: If text is slightly offscreen, enter/exit event is fired rapidly - masking or prevent repeat event?
     
     /// Initiates the creation of a information popover and shows it above the hovered morpheme/word
     /// - Parameters:
@@ -308,5 +351,6 @@ class SonagiViewController: NSViewController {
         outputTextView.textStorage?.deleteCharacters(in: NSMakeRange(0, (outputTextView.textStorage?.string.count)!))
         
         glyphLowerBound = 0
+        currentLinePosition = 0
     }
 }

@@ -715,19 +715,18 @@
                             <visualEffectView blendingMode="behindWindow" material="ultraDark" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="j83-yJ-04P">
                                 <rect key="frame" x="0.0" y="0.0" width="960" height="150"/>
                                 <subviews>
-                                    <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j6n-68-VPx">
-                                        <rect key="frame" x="20" y="30" width="920" height="90"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <clipView key="contentView" ambiguous="YES" drawsBackground="NO" copiesOnScroll="NO" id="tvY-na-eEz">
-                                            <rect key="frame" x="0.0" y="0.0" width="920" height="90"/>
+                                    <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j6n-68-VPx">
+                                        <rect key="frame" x="20" y="10" width="920" height="110"/>
+                                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="tvY-na-eEz">
+                                            <rect key="frame" x="0.0" y="0.0" width="920" height="110"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <textView ambiguous="YES" editable="NO" selectable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="TiS-NW-tHs">
-                                                    <rect key="frame" x="0.0" y="0.0" width="920" height="90"/>
+                                                <textView editable="NO" selectable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="TiS-NW-tHs">
+                                                    <rect key="frame" x="0.0" y="0.0" width="920" height="110"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <size key="minSize" width="920" height="90"/>
+                                                    <size key="minSize" width="920" height="110"/>
                                                     <size key="maxSize" width="920" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 </textView>
@@ -739,6 +738,12 @@
                                         </scroller>
                                     </scrollView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstItem="j6n-68-VPx" firstAttribute="top" secondItem="j83-yJ-04P" secondAttribute="top" constant="30" id="HKD-qW-Dwi"/>
+                                    <constraint firstItem="j6n-68-VPx" firstAttribute="leading" secondItem="j83-yJ-04P" secondAttribute="leading" constant="20" id="S9H-Jj-yoN"/>
+                                    <constraint firstAttribute="trailing" secondItem="j6n-68-VPx" secondAttribute="trailing" constant="20" id="WJE-Fj-0w7"/>
+                                    <constraint firstAttribute="bottom" secondItem="j6n-68-VPx" secondAttribute="bottom" constant="10" id="c5e-ka-A2j"/>
+                                </constraints>
                             </visualEffectView>
                         </subviews>
                         <constraints>
