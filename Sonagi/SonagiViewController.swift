@@ -20,10 +20,6 @@ class SonagiViewController: NSViewController {
             let parseKRTextWorkItem = DispatchWorkItem { [weak self] in
                 self!.parseKRText()
             }
-            let getLayoutLineLimitsItem = DispatchWorkItem { [weak self] in
-                self!.calculateGlyphsPerLine()
-            }
-            DispatchQueue.main.async(execute: getLayoutLineLimitsItem)
             DispatchQueue.main.async(execute: parseKRTextWorkItem)
         }
     }
@@ -57,8 +53,6 @@ class SonagiViewController: NSViewController {
     
     /// Holds any observers that are registered to Notification center
     var observers: [NSObjectProtocol] = []
-    
-    var lineCharacterLimit: [Int:Int] = [:]
 
     override func viewDidLoad() {
         // TODO: detect and parse text on first launch?
@@ -72,24 +66,6 @@ class SonagiViewController: NSViewController {
             forName: NSApplication.didBecomeActiveNotification,
             object: nil, queue: nil,
             using: windowDidBecomeKey))
-    }
-    
-    func calculateGlyphsPerLine() {
-        let tempOutputTextView: NSTextView = NSTextView()
-        let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:KRFont]
-        tempOutputTextView.frame = outputTextView.frame
-        tempOutputTextView.textStorage?.append(NSAttributedString(string: textKR!,attributes: attributes))
-        var numberOfLines: Int = 0
-        var index: Int = 0
-        let numberOfGlyphs = tempOutputTextView.layoutManager?.numberOfGlyphs
-        var lineRange = NSRange()
-        while index < numberOfGlyphs! {
-            tempOutputTextView.layoutManager?.lineFragmentRect(forGlyphAt: index, effectiveRange: &lineRange)
-            index = NSMaxRange(lineRange)
-            lineCharacterLimit[numberOfLines] = lineRange.upperBound + 1
-            numberOfLines += 1
-            lineRange = NSRange()
-        }
     }
     
     func cleanRawText() {
@@ -173,7 +149,9 @@ class SonagiViewController: NSViewController {
                 // Adds NSTracking area
                 setTracking(morpheme: morpheme.string, position: key)
                 // Adds whitespace after new morpheme/word in the text string in outputTextView to match textKRFullString
-                outputTextView.textStorage?.append(NSAttributedString(string:" "))
+                outputTextView.textStorage?.append(NSAttributedString(string:" ",attributes:attributes))
+                
+                addWhitespace = true
             }
             else {
                 outputTextView.textStorage?.append(morpheme)
@@ -209,8 +187,8 @@ class SonagiViewController: NSViewController {
     
     /// Tracks the position of the last morpheme/word in outputTextView's string
     var glyphLowerBound: Int = 0
-
-    var currentLinePosition: Int = 0
+    
+    var addWhitespace:Bool = false
     
     /// Sets a NSTrackingArea for each morpheme/word detected by Okt in outputTextView with "position" key that holds the
     /// position of the morpheme in the overall text string.
@@ -218,29 +196,13 @@ class SonagiViewController: NSViewController {
     ///     - morpheme: The morpheme/word for which a NSTracking area is to be added
     ///     - position: The position of the morpheme/word in the overall text string
     func setTracking(morpheme: String!, position: Int) {
-        // Make sure boundRect will be returned for glyphs on next line to avoid multi-line bounding rect
-        if glyphLowerBound == (lineCharacterLimit[currentLinePosition]!) {
-            glyphLowerBound += 1
-            currentLinePosition += 1
-        }
-        var glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
-        if glyphLowerBound == glyphUpperBound {
-            glyphLowerBound += 1
-            let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(lineCharacterLimit[currentLinePosition-1]!, 1), in: outputTextView.textContainer!)
-
-            let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
-            outputTextView.addTrackingArea(area)
-            glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
-        }
-        var glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
-        if glyphRect!.size.width > (outputTextView.frame.width - 20) { // TODO: Need case for no space before word split
-            let lineBreak = NSAttributedString(string: "\n")
-            outputTextView.textStorage?.insert(lineBreak, at: glyphLowerBound)
-            if outputTextView.textStorage!.string.contains("\n ") {
-                outputTextView.textStorage?.deleteCharacters(in: NSMakeRange(glyphLowerBound+1, 1))
+            if addWhitespace {
+                addWhitespace = false
+                glyphLowerBound += 1
             }
-            glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound+1, morpheme!.count), in: outputTextView.textContainer!)
-        }
+        let glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
+        let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
+
         let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
         outputTextView.addTrackingArea(area)
         glyphLowerBound = glyphUpperBound!
@@ -351,6 +313,5 @@ class SonagiViewController: NSViewController {
         outputTextView.textStorage?.deleteCharacters(in: NSMakeRange(0, (outputTextView.textStorage?.string.count)!))
         
         glyphLowerBound = 0
-        currentLinePosition = 0
     }
 }
