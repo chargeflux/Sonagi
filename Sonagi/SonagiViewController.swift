@@ -53,7 +53,11 @@ class SonagiViewController: NSViewController {
     
     /// Holds any observers that are registered to Notification center
     var observers: [NSObjectProtocol] = []
-
+    
+    var currentWindowSize: NSSize?
+    
+    var forcedNewLines: [Int:NSRange] = [:]
+    
     override func viewDidLoad() {
         // TODO: detect and parse text on first launch?
         super.viewDidLoad()
@@ -66,14 +70,64 @@ class SonagiViewController: NSViewController {
             forName: NSApplication.didBecomeActiveNotification,
             object: nil, queue: nil,
             using: windowDidBecomeKey))
+        
+        observers.append(NotificationCenter.default.addObserver(
+            forName: NSWindow.didResizeNotification,
+            object: nil, queue: nil,
+            using: windowResized))
+    }
+    
+    override func viewDidAppear() {
+        currentWindowSize = self.view.window!.frame.size
+    }
+    
+    func windowResized(_ notification: Notification) {
+        guard self.view.window!.frame.size != currentWindowSize
+            else { return }
+        print(self.view.window!.frame.size)
+        recalculateTracking()
+        currentWindowSize = self.view.window!.frame.size
+    }
+    
+    func recalculateTracking() {
+        glyphLowerBound = 0
+        guard outputTextView.string != ""
+            else { return }
+        
+        for lineBreak in forcedNewLines.keys.sorted(by: { $0 > $1 }){
+            outputTextView.textStorage?.deleteCharacters(in: forcedNewLines[lineBreak]!)
+        }
+        forcedNewLines.removeAll()
+        
+        let currentOutputTextViewString = outputTextView.string
+        let beforeEndIndexCurrentOutput = currentOutputTextViewString.index(before:currentOutputTextViewString.endIndex)
+        for trackingArea in outputTextView.trackingAreas {
+            outputTextView.removeTrackingArea(trackingArea)
+        }
+
+        for position in (textKRPartOfSpeech?.posDictNotStemmed.keys.sorted())! {
+            
+            let currentMorpheme = textKRPartOfSpeech?.posDictNotStemmed[position]?.morph
+            
+            setTracking(morpheme: currentMorpheme, position: position)
+            
+            
+            guard let afterMorphemeIndex = currentOutputTextViewString.index(currentOutputTextViewString.startIndex,offsetBy: glyphLowerBound,limitedBy:beforeEndIndexCurrentOutput)
+                else {
+                    return
+            }
+            if currentOutputTextViewString[afterMorphemeIndex] == " " {
+                addWhitespace = true
+            }
+        }
     }
     
     func cleanRawText() {
-        rawText = rawText!.trimmingCharacters(in: .whitespaces)
         rawText = rawText?.replacingOccurrences(of: "\n", with: " ")
         if (rawText?.contains("  "))! {
             rawText = rawText?.replacingOccurrences(of: "[ ]+", with: " ", options: .regularExpression, range: nil)
         }
+        rawText = rawText!.trimmingCharacters(in: .whitespaces)
         textKR = rawText
     }
     
@@ -137,7 +191,7 @@ class SonagiViewController: NSViewController {
                                                                 input.posDictNotStemmed[key]!.color!]
             
             let morpheme = NSAttributedString(string: input.posDictNotStemmed[key]!.morph,attributes:attributes)
-            
+
             /// Okt does not detect whitespace and has to be accounted for
             var isWhiteSpace: Bool!
             
@@ -196,16 +250,24 @@ class SonagiViewController: NSViewController {
     ///     - morpheme: The morpheme/word for which a NSTracking area is to be added
     ///     - position: The position of the morpheme/word in the overall text string
     func setTracking(morpheme: String!, position: Int) {
-            if addWhitespace {
-                addWhitespace = false
-                glyphLowerBound += 1
-            }
-        let glyphUpperBound = outputTextView.layoutManager?.glyphRange(for: outputTextView.textContainer!).upperBound
-        let glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, glyphUpperBound!-glyphLowerBound), in: outputTextView.textContainer!)
-
+        if addWhitespace {
+            addWhitespace = false
+            glyphLowerBound += 1
+        }
+        
+        let difference = morpheme.count
+        var glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, difference), in: outputTextView.textContainer!)
+        
+        if (glyphRect?.height)! > CGFloat(40) {
+            let newline = NSAttributedString(string: "\n")
+            outputTextView.textStorage?.insert(newline, at: glyphLowerBound)
+            forcedNewLines[position] = NSMakeRange(glyphLowerBound, 1)
+            glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound+1, difference), in: outputTextView.textContainer!)
+        }
+        
         let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
         outputTextView.addTrackingArea(area)
-        glyphLowerBound = glyphUpperBound!
+        glyphLowerBound += difference
     }
 
     override func mouseEntered(with event: NSEvent) {
