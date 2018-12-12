@@ -30,6 +30,7 @@ class SonagiViewController: NSViewController {
     /// Holds the PartOfSpeech class for the current instance of `textKR`
     var textKRPartOfSpeech: PartOfSpeech?
     
+    /// Font for Korean text
     let KRFont = NSFont(name: "NanumSquareR", size: 32) ?? NSFont.systemFont(ofSize: 32)
     
     /// Holds all information popovers for the current instance of `textKR`
@@ -42,8 +43,7 @@ class SonagiViewController: NSViewController {
     /// The table/dictionary from `dictionary.db` that will be queried
     var dictionary: Table?
     
-    /// Describes the column in database as a generic structure for
-    /// parsing in SQLite.swift
+    /// Describes the column in database as a generic structure for parsing in SQLite.swift
     let word = Expression<String>("word")
     
     let def = Expression<String>("def")
@@ -56,6 +56,7 @@ class SonagiViewController: NSViewController {
     
     var currentWindowSize: NSSize?
     
+    /// Holds all newlines manually inserted into `outputTextView`
     var forcedNewLines: [Int:NSRange] = [:]
     
     override func viewDidLoad() {
@@ -71,6 +72,7 @@ class SonagiViewController: NSViewController {
             object: nil, queue: nil,
             using: windowDidBecomeKey))
         
+        // Add observer for when window is resized
         observers.append(NotificationCenter.default.addObserver(
             forName: NSWindow.didResizeNotification,
             object: nil, queue: nil,
@@ -81,29 +83,37 @@ class SonagiViewController: NSViewController {
         currentWindowSize = self.view.window!.frame.size
     }
     
+    /// Receives notification for window resize events and initiates recalculation of
+    /// NSTrackingArea per morpheme if window size changed
     func windowResized(_ notification: Notification) {
         guard self.view.window!.frame.size != currentWindowSize
             else { return }
-        print(self.view.window!.frame.size)
         recalculateTracking()
         currentWindowSize = self.view.window!.frame.size
     }
     
+    /// Recalculate all instances of NSTrackingArea due to change in position for morphemes/words
+    /// and window size
     func recalculateTracking() {
         glyphLowerBound = 0
+        
+        /// Make sure text exists for recalculation to occur
         guard outputTextView.string != ""
             else { return }
         
+        // Remove all previous insertions of newlines due to previous resize event
+        // Removal is in reverse to negate need to recalculate shifted NSRange values if not in reverse
         for lineBreak in forcedNewLines.keys.sorted(by: { $0 > $1 }){
             outputTextView.textStorage?.deleteCharacters(in: forcedNewLines[lineBreak]!)
         }
         forcedNewLines.removeAll()
         
-        let currentOutputTextViewString = outputTextView.string
-        let beforeEndIndexCurrentOutput = currentOutputTextViewString.index(before:currentOutputTextViewString.endIndex)
         for trackingArea in outputTextView.trackingAreas {
             outputTextView.removeTrackingArea(trackingArea)
         }
+        
+        let currentOutputTextViewString = outputTextView.string
+        let beforeEndIndexCurrentOutput = currentOutputTextViewString.index(before:currentOutputTextViewString.endIndex)
 
         for position in (textKRPartOfSpeech?.posDictNotStemmed.keys.sorted())! {
             
@@ -111,17 +121,17 @@ class SonagiViewController: NSViewController {
             
             setTracking(morpheme: currentMorpheme, position: position)
             
-            
-            guard let afterMorphemeIndex = currentOutputTextViewString.index(currentOutputTextViewString.startIndex,offsetBy: glyphLowerBound,limitedBy:beforeEndIndexCurrentOutput)
+            guard let afterMorphemeIndex = currentOutputTextViewString.index(currentOutputTextViewString.startIndex,offsetBy: glyphLowerBound,limitedBy:beforeEndIndexCurrentOutput) // Can't use EndIndex as limitedBy bound
                 else {
                     return
             }
-            if currentOutputTextViewString[afterMorphemeIndex] == " " {
+            if currentOutputTextViewString[afterMorphemeIndex] == " " { // Makes sure setTracking accounts for whitespace in outputTextView
                 addWhitespace = true
             }
         }
     }
     
+    /// Clean raw text from pasteboard by stripping newlines and excess spaces
     func cleanRawText() {
         rawText = rawText?.replacingOccurrences(of: "\n", with: " ")
         if (rawText?.contains("  "))! {
@@ -195,16 +205,18 @@ class SonagiViewController: NSViewController {
             /// Okt does not detect whitespace and has to be accounted for
             var isWhiteSpace: Bool!
             
-            // Note checkWhiteSpaceSlice checks if there is a whitespace and slices textKRFullString as well
+            // Note `checkWhiteSpaceSlice` checks if there is a whitespace and slices `textKRFullString `as well
             (isWhiteSpace, textKRFullString) = checkWhiteSpaceSlice(fullString: textKRFullString, morpheme: morpheme.string)
             if isWhiteSpace {
                 outputTextView.textStorage?.append(morpheme)
                 
-                // Adds NSTracking area
+                // Adds NSTracking area for morpheme/word
                 setTracking(morpheme: morpheme.string, position: key)
-                // Adds whitespace after new morpheme/word in the text string in outputTextView to match textKRFullString
+                
+                // Adds whitespace after new morpheme/word in the text string in outputTextView to match `textKRFullString`
                 outputTextView.textStorage?.append(NSAttributedString(string:" ",attributes:attributes))
                 
+                // Makes sure setTracking accounts for inserted whitespace in outputTextView that matches `textKRFullString`
                 addWhitespace = true
             }
             else {
@@ -242,7 +254,8 @@ class SonagiViewController: NSViewController {
     /// Tracks the position of the last morpheme/word in outputTextView's string
     var glyphLowerBound: Int = 0
     
-    var addWhitespace:Bool = false
+    /// If outputTextView has an inserted whitespace character to match `textKR`
+    var addWhitespace: Bool = false
     
     /// Sets a NSTrackingArea for each morpheme/word detected by Okt in outputTextView with "position" key that holds the
     /// position of the morpheme in the overall text string.
@@ -255,19 +268,21 @@ class SonagiViewController: NSViewController {
             glyphLowerBound += 1
         }
         
-        let difference = morpheme.count
-        var glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, difference), in: outputTextView.textContainer!)
+        let morphemeLength = morpheme.count
+        var glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound, morphemeLength), in: outputTextView.textContainer!)
         
+        // Checks if word is split due to word wrapping (40 is due to fixed text size)
+        // TODO: Calculation of expected glyphRect height
         if (glyphRect?.height)! > CGFloat(40) {
             let newline = NSAttributedString(string: "\n")
             outputTextView.textStorage?.insert(newline, at: glyphLowerBound)
             forcedNewLines[position] = NSMakeRange(glyphLowerBound, 1)
-            glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound+1, difference), in: outputTextView.textContainer!)
+            glyphRect = outputTextView.layoutManager?.boundingRect(forGlyphRange: NSMakeRange(glyphLowerBound+1, morphemeLength), in: outputTextView.textContainer!)
         }
         
         let area = NSTrackingArea.init(rect: CGRect(origin: (glyphRect?.origin)!,size:glyphRect!.size), options: [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeAlways], owner: self, userInfo: ["Position": position])
         outputTextView.addTrackingArea(area)
-        glyphLowerBound += difference
+        glyphLowerBound += morphemeLength
     }
 
     override func mouseEntered(with event: NSEvent) {
