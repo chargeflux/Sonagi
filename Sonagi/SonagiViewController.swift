@@ -352,7 +352,6 @@ class SonagiViewController: NSViewController {
         let infoPopoverViewController = NSViewController()
         
         infoPopover.contentViewController = infoPopoverViewController
-        infoPopover.appearance = NSAppearance(named: .vibrantDark)
         infoPopover.behavior = .applicationDefined
         infoPopover.animates = false
         
@@ -367,10 +366,12 @@ class SonagiViewController: NSViewController {
         infoPopoverViewController.view = NSView(frame: informationTextView.frame)
         infoPopover.contentSize = NSSize(width:informationTextView.frame.size.width, height:informationTextView.frame.size.height-20)
         
-        // Necessary for text legibility on vibrantDark background
-        informationTextView.backgroundColor = NSColor.black // FIXME: Doesn't cover triangle in popover
+        informationTextView.backgroundColor = NSColor.black
         informationTextView.isSelectable = false
         informationTextView.isEditable = false
+        
+        // Override NSPopover's default background color with a custom NSView class
+        infoPopover.contentViewController!.view = CustomPopoverBackground()
         infoPopover.contentViewController!.view.addSubview(informationTextView)
         
         return infoPopover
@@ -390,5 +391,23 @@ class SonagiViewController: NSViewController {
         outputTextView.textStorage?.deleteCharacters(in: NSMakeRange(0, (outputTextView.textStorage?.string.count)!))
         
         glyphLowerBound = 0
+    }
+}
+
+
+/// Overrides the background of NSPopover to a custom color
+class CustomPopoverBackground: NSView {
+    /// Intercept view and modify before adding to NSPopover view hierachy
+    /// https://developer.apple.com/documentation/appkit/nsview/1483329-viewdidmovetowindow
+    override func viewDidMoveToWindow() {
+        guard let baseView = window?.contentView?.superview
+            else { return }
+        
+        let backgroundView = NSView(frame: baseView.bounds)
+        backgroundView.wantsLayer = true
+        backgroundView.layer?.backgroundColor = NSColor.black.cgColor
+        backgroundView.autoresizingMask = [.width, .height]
+
+        baseView.addSubview(backgroundView, positioned: .below, relativeTo: baseView)
     }
 }
